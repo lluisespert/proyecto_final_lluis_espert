@@ -44,30 +44,16 @@ const Login = () => {
           <form onSubmit={handleSubmit}>
             <div className="form-group">
               <label htmlFor="username">Username</label>
-              <input
-                type="text"
-                id="username"
-                name="username"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                required
-              />
+              <input type="text" id="username" name="username" value={username} onChange={(e) => setUsername(e.target.value)} required />
             </div>
             <div className="form-group">
               <label htmlFor="password">Password</label>
-              <input
-                type="password"
-                id="password"
-                name="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-              />
+              <input type="password" id="password" name="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
             </div>
             <button type="submit">{isRegistering ? 'Register' : 'Login'}</button>
           </form>
           <button onClick={() => setIsRegistering(!isRegistering)}>
-            {isRegistering ? 'Already have an account? Login' : "Don't have an account? Register"}
+            {isRegistering ? '¿Tienes alguna cuenta? Login' : "¿No tienes ninguna cuenta? Registrate"}
           </button>
         </div>
       </Tilt>
