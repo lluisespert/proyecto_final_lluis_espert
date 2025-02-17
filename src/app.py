@@ -25,26 +25,10 @@ def login():
     user = cursor.fetchone()
 
     if user:
-        return jsonify({"message": "Login successful!"}), 200
+        return jsonify({"message": "Login successful!", "rol": user['rol']}), 200
     else:
         return jsonify({"message": "Invalid credentials!"}), 401
 
-@app.route('/register', methods=['POST'])
-def register():
-    data = request.get_json()
-    username = data['username']
-    password = hashlib.sha256(data['password'].encode()).hexdigest()
-
-    cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-    cursor.execute('SELECT * FROM users WHERE username = %s', (username,))
-    user = cursor.fetchone()
-
-    if user:
-        return jsonify({"message": "User already exists!"}), 409
-    else:
-        cursor.execute('INSERT INTO users (username, password) VALUES (%s, %s)', (username, password))
-        mysql.connection.commit()
-        return jsonify({"message": "User registered successfully!"}), 201
-
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, port=5000)
+
