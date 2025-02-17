@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, session, redirect, url_for
 from flask_mysqldb import MySQL
 import MySQLdb.cursors
 import hashlib
@@ -11,6 +11,7 @@ app.config['MYSQL_HOST'] = 'localhost'
 app.config['MYSQL_USER'] = 'lluis'
 app.config['MYSQL_PASSWORD'] = '1234'
 app.config['MYSQL_DB'] = 'usuarios'
+app.secret_key = 'tu_secreto_aqui'  # Asegúrate de tener una clave secreta configurada
 
 mysql = MySQL(app)
 
@@ -25,9 +26,15 @@ def login():
     user = cursor.fetchone()
 
     if user:
+        session['user_id'] = user['id']
         return jsonify({"message": "Login successful!", "rol": user['rol']}), 200
     else:
         return jsonify({"message": "Invalid credentials!"}), 401
+
+@app.route('/logout', methods=['POST'])
+def logout():
+    session.pop('user_id', None)
+    return jsonify({"message": "Logout successful!"}), 200
 
 @app.route('/api/todos', methods=['GET', 'POST'])
 def manage_todos():
@@ -104,4 +111,3 @@ def get_users():
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
-

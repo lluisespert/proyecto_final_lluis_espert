@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import '../styles/styles.css'; // Asegúrate de crear este archivo CSS
 
 const Dashboard = () => {
-  const baseURL = 'http://localhost:5000/api'; 
+  const baseURL = 'http://localhost:5000/api';
 
   const [esEditable, setEsEditable] = useState(false);
   const [label, setLabel] = useState('');
@@ -98,9 +100,20 @@ const Dashboard = () => {
     getUsuarios();
   }, []);
 
+  const logout = async () => {
+    try {
+      await axios.post('http://localhost:5000/logout');
+      console.log('Sesión cerrada');
+      window.location.href = '/'; // Redirigir al índice después de cerrar la sesión
+    } catch (error) {
+      console.error('Error al cerrar sesión:', error.response.status, error.response.statusText);
+    }
+  };
+
   return (
     <div className="container my-5">
       <h1 className="text-success">Gestión de tareas</h1>
+      <button onClick={logout} className="btn btn-danger logout-btn">Logout</button>
       {esEditable ? (
         <form onSubmit={handleSubmitEdit}>
           <div className="text-start mb-3">
