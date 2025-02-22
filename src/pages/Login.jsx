@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Tilt from 'react-parallax-tilt';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
@@ -9,6 +9,7 @@ import UserDashboard from './UserDashboard';
 const Login = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [userRole, setUserRole] = useState('');
+  const [username, setUsername] = useState(''); // Nueva variable de estado para el nombre de usuario
 
   const validationSchema = Yup.object().shape({
     username: Yup.string()
@@ -33,6 +34,7 @@ const Login = () => {
     if (response.ok) {
       setIsAuthenticated(true);
       setUserRole(data.rol); // Asignamos el rol del usuario
+      setUsername(data.username); // Asignamos el nombre de usuario
     } else {
       console.log(data.error);
     }
@@ -41,13 +43,26 @@ const Login = () => {
   const handleLogout = () => {
     setIsAuthenticated(false);
     setUserRole(''); // Reiniciamos el rol del usuario
+    setUsername(''); // Reiniciamos el nombre de usuario
   };
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      const fetchData = async () => {
+        const response = await fetch('/dashboard');
+        const data = await response.json();
+        setUsername(data.username);
+        setUserRole(data.rol);
+      };
+      fetchData();
+    }
+  }, [isAuthenticated]);
 
   if (isAuthenticated) {
     if (userRole === 'admin') {
       return <Dashboard onLogout={handleLogout} />;
     } else if (userRole === 'user') {
-      return <UserDashboard onLogout={handleLogout} />;
+      return <UserDashboard username={username} onLogout={handleLogout} />; // Pasamos el nombre de usuario a UserDashboard
     } else {
       return <div>Rol de usuario no reconocido.</div>;
     }

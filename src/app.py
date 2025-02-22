@@ -15,21 +15,6 @@ app.secret_key = 'tu_secreto_aqui'  # Asegúrate de tener una clave secreta conf
 
 mysql = MySQL(app)
 
-@app.route('/login', methods=['POST'])
-def login():
-    data = request.get_json()
-    username = data['username']
-    password = hashlib.sha256(data['password'].encode()).hexdigest()
-
-    cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-    cursor.execute('SELECT * FROM users WHERE username = %s AND password = %s', (username, password))
-    user = cursor.fetchone()
-
-    if user:
-        session['user_id'] = user['id']
-        return jsonify({"message": "Login successful!", "rol": user['rol']}), 200
-    else:
-        return jsonify({"message": "Invalid credentials!"}), 401
 
 @app.route('/logout', methods=['POST'])
 def logout():
@@ -108,6 +93,37 @@ def get_users():
     cursor.execute('SELECT id, username FROM users WHERE rol = %s', ('user',))
     users = cursor.fetchall()
     return jsonify(users)
+
+@app.route('/login', methods=['POST'])
+def login():
+    data = request.get_json()
+    username = data['username']
+    password = hashlib.sha256(data['password'].encode()).hexdigest()
+
+    cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+    cursor.execute('SELECT * FROM users WHERE username = %s AND password = %s', (username, password))
+    user = cursor.fetchone()
+
+    if user:
+        session['user_id'] = user['id']
+        return jsonify({"message": "Login successful!", "username": user['username'], "rol": user['rol']}), 200
+    else:
+        return jsonify({"message": "Invalid credentials!"}), 401
+
+@app.route('/dashboard')
+def dashboard():
+    if 'user_id' in session:
+        cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+        cursor.execute('SELECT * FROM users WHERE id = %s', (session['user_id'],))
+        user = cursor.fetchone()
+
+        if user:
+            return jsonify({"username": user['username'], "rol": user['rol']})
+        else:
+            return redirect(url_for('login'))
+    else:
+        return redirect(url_for('login'))
+
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
