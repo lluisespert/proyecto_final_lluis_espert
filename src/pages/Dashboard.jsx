@@ -52,7 +52,8 @@ const Dashboard = () => {
     const dataToSend = {
       label: labelEdit,
       description: descriptionEdit,
-      is_done: completedEdit
+      is_done: completedEdit,
+      user_id: editarTarea.user_id // Asegúrate de enviar el user_id al editar
     };
 
     try {
@@ -159,7 +160,7 @@ const Dashboard = () => {
           <li key={item.id} className="list-group-item d-flex justify-content-between">
             <div>
               {item.is_done ? <i className="fa fa-thumbs-up text-success me-2"></i> : <i className="fa fa-times-circle text-danger me-2"></i>}
-              {item.label} - {item.description} - Asignado a: {item.assigned_user || "N/A"}
+              {item.label} - {item.description} - Asignado a: {item.assigned_user || "N/A"} - Estado: {item.is_done ? 'Terminada' : 'Pendiente'}
             </div>
             <div>
               <span onClick={() => handleEdit(item)}>

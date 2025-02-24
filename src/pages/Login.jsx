@@ -9,7 +9,7 @@ import UserDashboard from './UserDashboard';
 const Login = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [userRole, setUserRole] = useState('');
-  const [username, setUsername] = useState(''); // Nueva variable de estado para el nombre de usuario
+  const [username, setUsername] = useState('');
 
   const validationSchema = Yup.object().shape({
     username: Yup.string()
@@ -33,8 +33,8 @@ const Login = () => {
     const data = await response.json();
     if (response.ok) {
       setIsAuthenticated(true);
-      setUserRole(data.rol); // Asignamos el rol del usuario
-      setUsername(data.username); // Asignamos el nombre de usuario
+      setUserRole(data.rol);
+      setUsername(data.username);
     } else {
       console.log(data.error);
     }
@@ -42,8 +42,8 @@ const Login = () => {
 
   const handleLogout = () => {
     setIsAuthenticated(false);
-    setUserRole(''); // Reiniciamos el rol del usuario
-    setUsername(''); // Reiniciamos el nombre de usuario
+    setUserRole('');
+    setUsername('');
   };
 
   useEffect(() => {
@@ -62,7 +62,7 @@ const Login = () => {
     if (userRole === 'admin') {
       return <Dashboard onLogout={handleLogout} />;
     } else if (userRole === 'user') {
-      return <UserDashboard username={username} onLogout={handleLogout} />; // Pasamos el nombre de usuario a UserDashboard
+      return <UserDashboard username={username} onLogout={handleLogout} />;
     } else {
       return <div>Rol de usuario no reconocido.</div>;
     }
@@ -72,28 +72,32 @@ const Login = () => {
     <div className="login-container">
       <Tilt tiltMaxAngleX={25} tiltMaxAngleY={25} style={{ height: 'auto', width: '300px' }}>
         <div className="Tilt-inner">
-          <h2>Login</h2>
-          <Formik
-            initialValues={{ username: '', password: '' }}
-            validationSchema={validationSchema}
-            onSubmit={handleSubmit}
-          >
-            {({ isSubmitting }) => (
-              <Form>
-                <div className="form-group">
-                  <label htmlFor="username">Usuario</label>
-                  <Field type="text" id="username" name="username" className="form-control" />
-                  <ErrorMessage name="username" component="div" />
-                </div>
-                <div className="form-group">
-                  <label htmlFor="password">Contraseña</label>
-                  <Field type="password" id="password" name="password" className="form-control" />
-                  <ErrorMessage name="password" component="div" />
-                </div>
-                <button type="submit" disabled={isSubmitting}>Login</button>
-              </Form>
-            )}
-          </Formik>
+          <div className="card">
+            <div className="card-body">
+              <h2 className="card-title">Login</h2>
+              <Formik
+                initialValues={{ username: '', password: '' }}
+                validationSchema={validationSchema}
+                onSubmit={handleSubmit}
+              >
+                {({ isSubmitting }) => (
+                  <Form>
+                    <div className="form-group">
+                      <label htmlFor="username">Usuario</label>
+                      <Field type="text" id="username" name="username" className="form-control" />
+                      <ErrorMessage name="username" component="div" className="text-danger" />
+                    </div>
+                    <div className="form-group">
+                      <label htmlFor="password">Contraseña</label>
+                      <Field type="password" id="password" name="password" className="form-control" />
+                      <ErrorMessage name="password" component="div" className="text-danger" />
+                    </div>
+                    <button type="submit" className="btn btn-primary" disabled={isSubmitting}>Login</button>
+                  </Form>
+                )}
+              </Formik>
+            </div>
+          </div>
         </div>
       </Tilt>
     </div>
