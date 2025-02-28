@@ -3,6 +3,7 @@ from flask_mysqldb import MySQL
 import MySQLdb.cursors
 import hashlib
 from flask_cors import CORS
+from datetime import datetime, timezone
 
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "http://localhost:5173"}})
@@ -14,7 +15,6 @@ app.config['MYSQL_DB'] = 'usuarios'
 app.secret_key = 'tu_secreto_aqui'  # Asegúrate de tener una clave secreta configurada
 
 mysql = MySQL(app)
-
 
 @app.route('/logout', methods=['POST'])
 def logout():
@@ -30,14 +30,15 @@ def manage_todos():
             description = data.get('description', '')
             is_done = data.get('is_done', False)
             user_id = data.get('user_id', None)
+            assigned_at = datetime.now(timezone.utc)
 
             cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-            cursor.execute('INSERT INTO todos (label, description, is_done, user_id) VALUES (%s, %s, %s, %s)', (label, description, is_done, user_id))
+            cursor.execute('INSERT INTO todos (label, description, is_done, user_id, assigned_at) VALUES (%s, %s, %s, %s, %s)', (label, description, is_done, user_id, assigned_at))
             mysql.connection.commit()
 
             new_todo_id = cursor.lastrowid
             cursor.execute('''
-                SELECT todos.id, todos.label, todos.description, todos.is_done, users.username AS assigned_user 
+                SELECT todos.id, todos.label, todos.description, todos.is_done, todos.assigned_at, todos.completed_at, users.username AS assigned_user 
                 FROM todos 
                 LEFT JOIN users ON todos.user_id = users.id
                 WHERE todos.id = %s
@@ -51,7 +52,7 @@ def manage_todos():
     elif request.method == 'GET':
         cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
         cursor.execute('''
-            SELECT todos.id, todos.label, todos.description, todos.is_done, users.username AS assigned_user 
+            SELECT todos.id, todos.label, todos.description, todos.is_done, todos.assigned_at, todos.completed_at, users.username AS assigned_user 
             FROM todos 
             LEFT JOIN users ON todos.user_id = users.id
         ''')
@@ -65,13 +66,14 @@ def modify_todo(id):
         label = data['label']
         description = data['description']
         is_done = data['is_done']
+        completed_at = datetime.now(timezone.utc) if is_done else None
         
         cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-        cursor.execute('UPDATE todos SET label = %s, description = %s, is_done = %s WHERE id = %s', (label, description, is_done, id))
+        cursor.execute('UPDATE todos SET label = %s, description = %s, is_done = %s, completed_at = %s WHERE id = %s', (label, description, is_done, completed_at, id))
         mysql.connection.commit()
         
         cursor.execute('''
-            SELECT todos.id, todos.label, todos.description, todos.is_done, users.username AS assigned_user 
+            SELECT todos.id, todos.label, todos.description, todos.is_done, todos.assigned_at, todos.completed_at, users.username AS assigned_user 
             FROM todos 
             LEFT JOIN users ON todos.user_id = users.id
             WHERE todos.id = %s
@@ -123,7 +125,6 @@ def dashboard():
             return redirect(url_for('login'))
     else:
         return redirect(url_for('login'))
-
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)

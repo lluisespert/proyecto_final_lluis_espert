@@ -185,6 +185,12 @@ const Dashboard = () => {
             <div>
               {item.is_done ? <i className="fa fa-thumbs-up text-success me-2"></i> : <i className="fa fa-times-circle text-danger me-2"></i>}
               {item.label} - {item.description} - {language === 'es' ? 'Asignado a' : 'Assigned to'}: {item.assigned_user || "N/A"} - {language === 'es' ? 'Estado' : 'Status'}: {item.is_done ? (language === 'es' ? 'Terminada' : 'Completed') : (language === 'es' ? 'Pendiente' : 'Pending')}
+              {item.assigned_at && (
+                <p className="card-text">{language === 'es' ? 'Asignada a las' : 'Assigned at'}: {new Date(item.assigned_at).toLocaleString()}</p>
+              )}
+              {item.is_done && item.completed_at && (
+                <p className="card-text">{language === 'es' ? 'Terminada a las' : 'Completed at'}: {new Date(item.completed_at).toLocaleString()}</p>
+              )}
             </div>
             <div>
               <span onClick={() => handleEdit(item)}>

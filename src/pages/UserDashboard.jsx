@@ -25,14 +25,16 @@ const UserDashboard = ({ username, userId, onLogout }) => {
   const handleCompleteTask = async (taskId) => {
     try {
       const taskToUpdate = tasks.find(task => task.id === taskId);
+      const completedAt = new Date().toISOString();
       await axios.put(`http://localhost:5000/api/todos/${taskId}`, { 
         label: taskToUpdate.label, 
         description: taskToUpdate.description, 
         is_done: true, 
         user_id: username, // Guardar el username en el campo user_id
-        username: username
+        username: username,
+        completed_at: completedAt
       });
-      setTasks(tasks.map(task => task.id === taskId ? { ...task, is_done: true } : task));
+      setTasks(tasks.map(task => task.id === taskId ? { ...task, is_done: true, completed_at: completedAt } : task));
     } catch (error) {
       console.error('Error completing task:', error);
     }
@@ -75,9 +77,9 @@ const UserDashboard = ({ username, userId, onLogout }) => {
         <button onClick={changeLanguageToEnglish} className="btn btn-success me-2">English</button>
         <button onClick={changeLanguageToSpanish} className="btn btn-success me-2">Español</button>
       </div>
-      <h1 className="text-center mt-5">{language === 'es' ? `Bienvenido, ${username}!` : `Welcome, ${username}!`}</h1>
+      <h1 className="text-center">{language === 'es' ? `Bienvenido, ${username}!` : `Welcome, ${username}!`}</h1>
       <h1>{language === 'es' ? 'Te muestro las tareas que tienes pendientes' : 'Here are your pending tasks'}</h1>
-      <div className="task-list mt-5">
+      <div className="task-list">
         {tasks.map((task) => (
           <div key={task.id} className="card mb-3 mx-auto" style={{ maxWidth: '500px' }}>
             <div className="card-body">
@@ -106,6 +108,12 @@ const UserDashboard = ({ username, userId, onLogout }) => {
                   <h5 className="card-title">{language === 'es' ? 'Nombre de la tarea' : 'Task Name'}: {task.label}</h5>
                   <p className="card-text">{language === 'es' ? 'Descripción de la tarea' : 'Task Description'}: {task.description}</p>
                   <p className="card-text">Status: {task.is_done ? (language === 'es' ? 'Terminada' : 'Completed') : (language === 'es' ? 'Pendiente' : 'Pending')}</p>
+                  {task.assigned_at && (
+                    <p className="card-text">{language === 'es' ? 'Asignada a las' : 'Assigned at'}: {new Date(task.assigned_at).toLocaleString()}</p>
+                  )}
+                  {task.is_done && task.completed_at && (
+                    <p className="card-text">{language === 'es' ? 'Terminada a las' : 'Completed at'}: {new Date(task.completed_at).toLocaleString()}</p>
+                  )}
                   {!task.is_done && (
                     <button onClick={() => handleCompleteTask(task.id)} className="btn btn-success me-2">
                       {language === 'es' ? 'Terminar la tarea' : 'Complete Task'}
