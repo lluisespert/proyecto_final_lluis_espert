@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 20-02-2025 a las 22:31:05
+-- Tiempo de generación: 28-02-2025 a las 12:33:48
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -28,12 +28,22 @@ SET time_zone = "+00:00";
 --
 
 CREATE TABLE `todos` (
-  `id` int(11) NOT NULL,
+  `id` bigint(20) UNSIGNED NOT NULL,
   `label` varchar(255) NOT NULL,
-  `description` text DEFAULT NULL,
-  `is_done` tinyint(1) NOT NULL DEFAULT 0,
-  `user_id` int(11) DEFAULT NULL
+  `description` text NOT NULL,
+  `is_done` tinyint(1) DEFAULT 0,
+  `user_id` int(11) NOT NULL,
+  `assigned_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `completed_at` timestamp NULL DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `todos`
+--
+
+INSERT INTO `todos` (`id`, `label`, `description`, `is_done`, `user_id`, `assigned_at`, `completed_at`) VALUES
+(1, 'Prueba Tiempo', 'Diferencia de tiempo', 1, 3, '2025-02-28 07:28:51', '2025-02-28 07:29:23'),
+(2, 'Prueba 2', 'Vamos a hacer pasar el tiempo', 1, 3, '2025-02-28 10:08:01', '2025-02-28 10:08:53');
 
 -- --------------------------------------------------------
 
@@ -64,8 +74,7 @@ INSERT INTO `users` (`id`, `username`, `password`, `rol`) VALUES
 -- Indices de la tabla `todos`
 --
 ALTER TABLE `todos`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `user_id` (`user_id`);
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Indices de la tabla `users`
@@ -81,23 +90,13 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT de la tabla `todos`
 --
 ALTER TABLE `todos`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT de la tabla `users`
 --
 ALTER TABLE `users`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
-
---
--- Restricciones para tablas volcadas
---
-
---
--- Filtros para la tabla `todos`
---
-ALTER TABLE `todos`
-  ADD CONSTRAINT `todos_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
