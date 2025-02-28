@@ -101,7 +101,7 @@ button:focus-visible {
 }
 
 body {
-  background-color: #f8f9fa; /* Cambia este color al que prefieras */
+  background: linear-gradient(135deg, #87CEEB 0%, #00BFFF 100%); /* Degradado de azul cielo */
   margin: 0;
   height: 100vh;
   display: flex;
@@ -201,3 +201,11 @@ button:hover {
   border-radius: 5px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
+
+.text-3d {
+  color: #28a745; /* Color del texto */
+  text-shadow: 1px 1px 0 #000, 2px 2px 0 #000, 3px 3px 0 #000, 4px 4px 0 #000, 5px 5px 0 #000;
+  font-size: 2.5rem; /* Tamaño del texto */
+  font-weight: bold; /* Grosor del texto */
+}
+

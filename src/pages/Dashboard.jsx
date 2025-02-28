@@ -16,6 +16,7 @@ const Dashboard = () => {
   const [descriptionEdit, setDescriptionEdit] = useState('');
   const [completedEdit, setCompletedEdit] = useState(false);
   const [selectedUser, setSelectedUser] = useState('');
+  const [language, setLanguage] = useState('es'); // Estado para el idioma
 
   const handleSubmitAdd = async (event) => {
     event.preventDefault();
@@ -111,56 +112,79 @@ const Dashboard = () => {
     }
   };
 
+  const changeLanguageToEnglish = () => {
+    setLanguage('en');
+  };
+
+  const changeLanguageToSpanish = () => {
+    setLanguage('es');
+  };
+
   return (
     <div className="container my-5">
-      <h1 className="text-success">Gestión de tareas</h1>
-      <button onClick={logout} className="btn btn-danger logout-btn">Logout</button>
+     
+      <div className="d-flex justify-content-center">
+        <button onClick={logout} className="btn btn-danger me-2">Logout</button>
+        <button onClick={changeLanguageToEnglish} className="btn btn-success me-2">English</button>
+        <button onClick={changeLanguageToSpanish} className="btn btn-success me-2">Español</button>
+      </div>
+      <h1 className="text-3d mt-5">{language === 'es' ? 'Gestión de tareas' : 'Task Management'}</h1>
       {esEditable ? (
-        <form onSubmit={handleSubmitEdit}>
-          <div className="text-start mb-3">
-            <label htmlFor="labelEdit" className="form-label">Editar Nombre de la Tarea</label>
-            <input type="text" className="form-control" id="labelEdit" value={labelEdit} onChange={(event) => { setLabelEdit(event.target.value) }} />
+        <div className="card mb-3 card-custom mt-5">
+          <div className="card-body">
+            <h5 className="card-title">{language === 'es' ? 'Editar Tarea' : 'Edit Task'}</h5>
+            <form onSubmit={handleSubmitEdit}>
+              <div className="text-start mb-3">
+                <label htmlFor="labelEdit" className="form-label">{language === 'es' ? 'Editar Nombre de la Tarea' : 'Edit Task Name'}</label>
+                <input type="text" className="form-control" id="labelEdit" value={labelEdit} onChange={(event) => { setLabelEdit(event.target.value) }} />
+              </div>
+              <div className="text-start mb-3">
+                <label htmlFor="descriptionEdit" className="form-label">{language === 'es' ? 'Editar Descripción de la Tarea' : 'Edit Task Description'}</label>
+                <textarea className="form-control" id="descriptionEdit" value={descriptionEdit} onChange={(event) => { setDescriptionEdit(event.target.value) }} />
+              </div>
+              <div className="text-start mb-3 form-check">
+                <input type="checkbox" className="form-check-input" id="exampleCheck1" checked={completedEdit} onChange={(event) => { setCompletedEdit(event.target.checked) }} />
+                <label className="form-check-label" htmlFor="exampleCheck1">{language === 'es' ? 'Completada la tarea' : 'Task Completed'}</label>
+              </div>
+              <button type="submit" className="btn btn-primary me-2">{language === 'es' ? 'Enviar' : 'Submit'}</button>
+              <button type="reset" className="btn btn-secondary">{language === 'es' ? 'Reset' : 'Reset'}</button>
+            </form>
           </div>
-          <div className="text-start mb-3">
-            <label htmlFor="descriptionEdit" className="form-label">Editar Descripción de la Tarea</label>
-            <textarea className="form-control" id="descriptionEdit" value={descriptionEdit} onChange={(event) => { setDescriptionEdit(event.target.value) }} />
-          </div>
-          <div className="text-start mb-3 form-check">
-            <input type="checkbox" className="form-check-input" id="exampleCheck1" checked={completedEdit} onChange={(event) => { setCompletedEdit(event.target.checked) }} />
-            <label className="form-check-label" htmlFor="exampleCheck1">Completada la tarea</label>
-          </div>
-          <button type="submit" className="btn btn-primary me-2">Enviar</button>
-          <button type="reset" className="btn btn-secondary">Reset</button>
-        </form>
+        </div>
       ) : (
-        <form onSubmit={handleSubmitAdd}>
-          <div className="text-start mb-3">
-            <label htmlFor="label" className="form-label">Nombre de la Tarea</label>
-            <input type="text" className="form-control" id="label" value={label} onChange={(event) => setLabel(event.target.value)} />
+        <div className="card mb-3 mt-5">
+          <div className="card-body">
+            <h5 className="card-title">{language === 'es' ? 'Añadir Tarea' : 'Add Task'}</h5>
+            <form onSubmit={handleSubmitAdd}>
+              <div className="text-start mb-3">
+                <label htmlFor="label" className="form-label">{language === 'es' ? 'Nombre de la Tarea' : 'Task Name'}</label>
+                <input type="text" className="form-control" id="label" value={label} onChange={(event) => setLabel(event.target.value)} />
+              </div>
+              <div className="text-start mb-3">
+                <label htmlFor="description" className="form-label">{language === 'es' ? 'Descripción de la Tarea' : 'Task Description'}</label>
+                <textarea className="form-control" id="description" value={description} onChange={(event) => setDescription(event.target.value)} />
+              </div>
+              <div className="text-start mb-3">
+                <label htmlFor="selectUser" className="form-label">{language === 'es' ? 'Asignar Usuario' : 'Assign User'}</label>
+                <select className="form-select" id="selectUser" value={selectedUser} onChange={(event) => setSelectedUser(event.target.value)}>
+                  <option value="">{language === 'es' ? 'Seleccione un usuario' : 'Select a user'}</option>
+                  {usuarios.map((usuario) => (
+                    <option key={usuario.id} value={usuario.id}>{usuario.username}</option>
+                  ))}
+                </select>
+              </div>
+              <button type="submit" className="btn btn-primary">{language === 'es' ? 'Añadir Tarea' : 'Add Task'}</button>
+            </form>
           </div>
-          <div className="text-start mb-3">
-            <label htmlFor="description" className="form-label">Descripción de la Tarea</label>
-            <textarea className="form-control" id="description" value={description} onChange={(event) => setDescription(event.target.value)} />
-          </div>
-          <div className="text-start mb-3">
-            <label htmlFor="selectUser" className="form-label">Asignar Usuario</label>
-            <select className="form-select" id="selectUser" value={selectedUser} onChange={(event) => setSelectedUser(event.target.value)}>
-              <option value="">Seleccione un usuario</option>
-              {usuarios.map((usuario) => (
-                <option key={usuario.id} value={usuario.id}>{usuario.username}</option>
-              ))}
-            </select>
-          </div>
-          <button type="submit" className="btn btn-primary">Añadir Tarea</button>
-        </form>
+        </div>
       )}
-      <h2 className="text-primary mt-5">Lista de tareas</h2>
+      <h2 className="text-3d mt-5">{language === 'es' ? 'Lista de tareas' : 'Task List'}</h2>
       <ul className="text-start list-group">
         {todos.map((item) => (
           <li key={item.id} className="list-group-item d-flex justify-content-between">
             <div>
               {item.is_done ? <i className="fa fa-thumbs-up text-success me-2"></i> : <i className="fa fa-times-circle text-danger me-2"></i>}
-              {item.label} - {item.description} - Asignado a: {item.assigned_user || "N/A"} - Estado: {item.is_done ? 'Terminada' : 'Pendiente'}
+              {item.label} - {item.description} - {language === 'es' ? 'Asignado a' : 'Assigned to'}: {item.assigned_user || "N/A"} - {language === 'es' ? 'Estado' : 'Status'}: {item.is_done ? (language === 'es' ? 'Terminada' : 'Completed') : (language === 'es' ? 'Pendiente' : 'Pending')}
             </div>
             <div>
               <span onClick={() => handleEdit(item)}>
@@ -172,7 +196,7 @@ const Dashboard = () => {
             </div>
           </li>
         ))}
-        <li className="list-group-item text-end">{todos.length === 0 ? 'No hay tareas, añade nuevas tareas' : todos.length + ' tareas'}</li>
+        <li className="list-group-item text-end">{todos.length === 0 ? (language === 'es' ? 'No hay tareas, añade nuevas tareas' : 'No tasks, add new tasks') : todos.length + (language === 'es' ? ' tareas' : ' tasks')}</li>
       </ul>
     </div>
   );

@@ -7,6 +7,7 @@ const UserDashboard = ({ username, userId, onLogout }) => {
   const [editingTask, setEditingTask] = useState(null);
   const [newDescription, setNewDescription] = useState('');
   const [newLabel, setNewLabel] = useState('');
+  const [language, setLanguage] = useState('es'); // Estado para el idioma
 
   useEffect(() => {
     const fetchTasks = async () => {
@@ -59,12 +60,24 @@ const UserDashboard = ({ username, userId, onLogout }) => {
     }
   };
 
+  const changeLanguageToEnglish = () => {
+    setLanguage('en');
+  };
+
+  const changeLanguageToSpanish = () => {
+    setLanguage('es');
+  };
+
   return (
     <div className="dashboard-container">
-      <button onClick={onLogout} className="btn btn-danger logout-btn">Logout</button>
-      <h1 className="text-center">Bienvenido, {username}!</h1>
-      <h1> Te muestro las tareas que tienes pendientes</h1>
-      <div className="task-list">
+      <div className="d-flex justify-content-center mb-3">
+        <button onClick={onLogout} className="btn btn-danger me-2">Logout</button>
+        <button onClick={changeLanguageToEnglish} className="btn btn-success me-2">English</button>
+        <button onClick={changeLanguageToSpanish} className="btn btn-success me-2">Español</button>
+      </div>
+      <h1 className="text-center mt-5">{language === 'es' ? `Bienvenido, ${username}!` : `Welcome, ${username}!`}</h1>
+      <h1>{language === 'es' ? 'Te muestro las tareas que tienes pendientes' : 'Here are your pending tasks'}</h1>
+      <div className="task-list mt-5">
         {tasks.map((task) => (
           <div key={task.id} className="card mb-3 mx-auto" style={{ maxWidth: '500px' }}>
             <div className="card-body">
@@ -82,24 +95,24 @@ const UserDashboard = ({ username, userId, onLogout }) => {
                     className="form-control mb-2"
                   />
                   <button onClick={() => handleSaveTask(task.id)} className="btn btn-primary me-2">
-                    Save
+                    {language === 'es' ? 'Guardar' : 'Save'}
                   </button>
                   <button onClick={() => setEditingTask(null)} className="btn btn-secondary">
-                    Cancel
+                    {language === 'es' ? 'Cancelar' : 'Cancel'}
                   </button>
                 </div>
               ) : (
                 <div>
-                  <h5 className="card-title">Nombre de la tarea: {task.label}</h5>
-                  <p className="card-text">Descripción de la tarea: {task.description}</p>
-                  <p className="card-text">Status: {task.is_done ? 'Terminada' : 'Pendiente'}</p>
+                  <h5 className="card-title">{language === 'es' ? 'Nombre de la tarea' : 'Task Name'}: {task.label}</h5>
+                  <p className="card-text">{language === 'es' ? 'Descripción de la tarea' : 'Task Description'}: {task.description}</p>
+                  <p className="card-text">Status: {task.is_done ? (language === 'es' ? 'Terminada' : 'Completed') : (language === 'es' ? 'Pendiente' : 'Pending')}</p>
                   {!task.is_done && (
                     <button onClick={() => handleCompleteTask(task.id)} className="btn btn-success me-2">
-                      Terminar la tarea
+                      {language === 'es' ? 'Terminar la tarea' : 'Complete Task'}
                     </button>
                   )}
                   <button onClick={() => handleEditTask(task)} className="btn btn-warning">
-                    Editar la tarea
+                    {language === 'es' ? 'Editar la tarea' : 'Edit Task'}
                   </button>
                 </div>
               )}
