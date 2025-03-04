@@ -4,15 +4,13 @@ import MySQLdb.cursors
 import hashlib
 from flask_cors import CORS
 from datetime import datetime, timezone
+from config import Config  
 
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "http://localhost:5173"}})
 
-app.config['MYSQL_HOST'] = 'localhost'
-app.config['MYSQL_USER'] = 'lluis'
-app.config['MYSQL_PASSWORD'] = '1234'
-app.config['MYSQL_DB'] = 'usuarios'
-app.secret_key = 'tu_secreto_aqui'  # Asegúrate de tener una clave secreta configurada
+
+app.config.from_object(Config)
 
 mysql = MySQL(app)
 

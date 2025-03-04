@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { useTranslation } from 'react-i18next';
 import '../styles/styles.css'; // Asegúrate de crear este archivo CSS
 
 const UserDashboard = ({ username, userId, onLogout }) => {
+  const { t, i18n } = useTranslation();
   const [tasks, setTasks] = useState([]);
   const [editingTask, setEditingTask] = useState(null);
   const [newDescription, setNewDescription] = useState('');
   const [newLabel, setNewLabel] = useState('');
-  const [language, setLanguage] = useState('es'); // Estado para el idioma
 
   useEffect(() => {
     const fetchTasks = async () => {
@@ -62,27 +63,31 @@ const UserDashboard = ({ username, userId, onLogout }) => {
     }
   };
 
-  const changeLanguageToEnglish = () => {
-    setLanguage('en');
-  };
-
-  const changeLanguageToSpanish = () => {
-    setLanguage('es');
+  const changeLanguage = (lng) => {
+    i18n.changeLanguage(lng);
   };
 
   return (
     <div className="dashboard-container">
       <div className="d-flex justify-content-center mb-3">
-        <button onClick={onLogout} className="btn btn-danger me-2">Logout</button>
-        <button onClick={changeLanguageToEnglish} className="btn btn-success me-2">English</button>
-        <button onClick={changeLanguageToSpanish} className="btn btn-success me-2">Español</button>
+        <button onClick={onLogout} className="btn btn-danger me-2">{t('logout')}</button>
+        <button onClick={() => changeLanguage('en')} className="btn btn-success me-2">{t('english')}</button>
+        <button onClick={() => changeLanguage('es')} className="btn btn-success me-2">{t('spanish')}</button>
       </div>
-      <h1 className="text-center">{language === 'es' ? `Bienvenido, ${username}!` : `Welcome, ${username}!`}</h1>
-      <h1>{language === 'es' ? 'Te muestro las tareas que tienes pendientes' : 'Here are your pending tasks'}</h1>
+      <h1 className="text-center">{t('welcome', { username })}</h1>
+      <h1>{t('pending_tasks')}</h1>
       <div className="task-list">
         {tasks.map((task) => (
           <div key={task.id} className="card mb-3 mx-auto" style={{ maxWidth: '500px' }}>
             <div className="card-body">
+              <div className="d-flex align-items-center mb-3">
+                <img 
+                  src={`https://robohash.org/${task.id}.png?size=50x50`} 
+                  alt="Avatar" 
+                  className="rounded-circle me-3" 
+                />
+                <h5 className="card-title mb-0">{t('task_name')}: {task.label}</h5>
+              </div>
               {editingTask && editingTask.id === task.id ? (
                 <div>
                   <input
@@ -97,30 +102,29 @@ const UserDashboard = ({ username, userId, onLogout }) => {
                     className="form-control mb-2"
                   />
                   <button onClick={() => handleSaveTask(task.id)} className="btn btn-primary me-2">
-                    {language === 'es' ? 'Guardar' : 'Save'}
+                    {t('save')}
                   </button>
                   <button onClick={() => setEditingTask(null)} className="btn btn-secondary">
-                    {language === 'es' ? 'Cancelar' : 'Cancel'}
+                    {t('cancel')}
                   </button>
                 </div>
               ) : (
                 <div>
-                  <h5 className="card-title">{language === 'es' ? 'Nombre de la tarea' : 'Task Name'}: {task.label}</h5>
-                  <p className="card-text">{language === 'es' ? 'Descripción de la tarea' : 'Task Description'}: {task.description}</p>
-                  <p className="card-text">Status: {task.is_done ? (language === 'es' ? 'Terminada' : 'Completed') : (language === 'es' ? 'Pendiente' : 'Pending')}</p>
+                  <p className="card-text">{t('task_description')}: {task.description}</p>
+                  <p className="card-text">{t('status')}: {task.is_done ? t('completed') : t('pending')}</p>
                   {task.assigned_at && (
-                    <p className="card-text">{language === 'es' ? 'Asignada a las' : 'Assigned at'}: {new Date(task.assigned_at).toLocaleString()}</p>
+                    <p className="card-text">{t('assigned_at')}: {new Date(task.assigned_at).toLocaleString()}</p>
                   )}
                   {task.is_done && task.completed_at && (
-                    <p className="card-text">{language === 'es' ? 'Terminada a las' : 'Completed at'}: {new Date(task.completed_at).toLocaleString()}</p>
+                    <p className="card-text">{t('completed_at')}: {new Date(task.completed_at).toLocaleString()}</p>
                   )}
                   {!task.is_done && (
                     <button onClick={() => handleCompleteTask(task.id)} className="btn btn-success me-2">
-                      {language === 'es' ? 'Terminar la tarea' : 'Complete Task'}
+                      {t('complete_task')}
                     </button>
                   )}
                   <button onClick={() => handleEditTask(task)} className="btn btn-warning">
-                    {language === 'es' ? 'Editar la tarea' : 'Edit Task'}
+                    {t('edit_task')}
                   </button>
                 </div>
               )}
